@@ -139,14 +139,20 @@ class AgentFrameworkProductManagementAgent:
         self.agent = ChatAgent(
             chat_client=chat_service,
             name='ProductManagerAgent',
-            instructions=(
+          instructions=(
                 "Your role is to carefully analyze the user's request and respond as best as you can. "
                 'Your primary goal is precise and efficient delegation to ensure customers and employees receive accurate and specialized '
-                'assistance promptly.'
-            ),
-            tools=[],
+                'assistance promptly.\n\n'
+                'IMPORTANT: You must ALWAYS respond with a valid JSON object in the following format:\n'
+                '{"status": "<status>", "message": "<your response>"}\n\n'
+                'Where status is one of: "input_required", "completed", or "error".\n'
+                '- Use "input_required" when you need more information from the user.\n'
+                '- Use "completed" when the task is finished.\n'
+                '- Use "error" when something went wrong.\n\n'
+                'Never respond with plain text. Always use the JSON format above.'
+            )  
+       
         )
-
     async def invoke(self, user_input: str, session_id: str) -> dict[str, Any]:
         """Handle synchronous tasks (like tasks/send).
 
